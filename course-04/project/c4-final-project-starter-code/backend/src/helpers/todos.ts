@@ -38,6 +38,6 @@ export async function deleteTodo(userId: string, todoId: string): Promise<void> 
     return todoAccess.deleteTodoItem(userId, todoId);
 }
 
-export async function updateTodo(userId: string, id: string, payload: UpdateTodoRequest) : Promise<void>{
-    return todoAccess.updateTodoItem(userId, id, payload);
+export async function updateTodo(userId: string, todoId: string, payload: UpdateTodoRequest) : Promise<void>{
+    return todoAccess.updateTodoItem(userId, todoId, payload);
   }
