@@ -1,12 +1,83 @@
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { createLogger } from '../utils/logger'
+// import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
-import { TodoUpdate } from '../models/TodoUpdate';
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
+// import { TodoUpdate } from '../models/TodoUpdate';
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-const logger = createLogger('TodosAccess')
+// const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
+
+export class TodoAccess {
+
+  constructor(
+    private readonly docClient: DocumentClient = createDynamoDBClient(),
+    private readonly todosTable = process.env.TODOS_TABLE) {
+  }
+
+  async getTodosForUser(userId: string): Promise<TodoItem[]> {
+
+    const result = await this.docClient.query({
+      TableName: this.todosTable,
+      KeyConditionExpression: "userId = :userId",
+      ExpressionAttributeValues: {
+        ":userId": userId
+      },
+      
+    }).promise()
+    const items = result.Items
+
+    return items as TodoItem[]
+  }
+
+  async createTodoItem(todo: TodoItem): Promise<TodoItem> {
+    console.log('Creating a todo with id ${todo.todoId}')
+    
+    await this.docClient.put({
+      TableName: this.todosTable,
+      Item: todo
+    }).promise()
+
+    return todo
+  }
+
+  async deleteTodoItem(userId: string, todoId: string): Promise<void> {
+    console.log('Delete a todo with id ${todo.todoId}')
+    
+    await this.docClient.delete({
+      TableName: this.todosTable,
+      Key: { userId, todoId }
+    }).promise()
+
+    return;
+  }
+
+  async updateTodoItem(userId: string, todoId: string, todo: UpdateTodoRequest): Promise<void> {
+    // logger.info('Starting update todo: ', todo);
+    await this.docClient.update({
+      TableName: this.todosTable,
+      Key: { userId, todoId },
+      UpdateExpression: 'set #name = :updateName, #done = :doneStatus, #dueDate = :updateDueDate',
+      ExpressionAttributeNames: { '#name': 'name', '#done': 'done', '#dueDate': 'dueDate' },
+      ExpressionAttributeValues: {
+        ':updateName': todo.name,
+        ':doneStatus': todo.done,
+        ':updateDueDate': todo.dueDate,
+      },
+      ReturnValues: "UPDATED_NEW"
+    }).promise();
+
+    return;
+  }  
+
+}
+
+
+
+function createDynamoDBClient() {
+  return new XAWS.DynamoDB.DocumentClient()
+}
