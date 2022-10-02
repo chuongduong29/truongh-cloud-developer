@@ -1,5 +1,7 @@
 import * as AWS from 'aws-sdk'
 // import * as AWSXRay from 'aws-xray-sdk'
+import { createLogger } from '../utils/logger';
+const logger = createLogger('S3 Attachment')
 
 // const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -18,3 +20,23 @@ return s3.getSignedUrl('putObject', {
     Expires: parseInt(urlExpiration)
 })
 }  
+
+export async function removeAttachment(todoId: string): Promise<void> {
+  const params = {
+    Bucket: bucketName,
+    Key: todoId
+  }
+  try {
+    await s3.headObject(params).promise()
+    logger.info("File Found in S3")
+    try {
+      await s3.deleteObject(params).promise()
+      logger.info("file deleted Successfully")
+    }
+    catch (err) {
+      logger.error("ERROR in file Deleting : " + JSON.stringify(err))
+    }
+  } catch (err) {
+    logger.error("File not Found ERROR : " + err.code)
+  }
+}

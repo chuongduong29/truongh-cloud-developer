@@ -41,3 +41,7 @@ export async function deleteTodo(userId: string, todoId: string): Promise<void> 
 export async function updateTodo(userId: string, todoId: string, payload: UpdateTodoRequest) : Promise<void>{
     return todoAccess.updateTodoItem(userId, todoId, payload);
   }
+
+  export async function updateTodoAttachment(userId: string, todoId: string): Promise<void> {
+    return todoAccess.updateTodoAttachment(userId, todoId);
+  }
