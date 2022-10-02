@@ -13,6 +13,17 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
     // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
+
+    const updatedTodoName = updatedTodo.name
+    if (!updatedTodoName.split(' ').join('')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: 'ERROR: Todo name is empty.'
+        })
+      };
+    }
+
     const userId: string = getUserId(event);
 
     const updatedItem = await updateTodo(userId, todoId, updatedTodo);

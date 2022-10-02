@@ -10,6 +10,17 @@ export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const newTodo: CreateTodoRequest = JSON.parse(event.body)
     // TODO: Implement creating a new TODO item
+
+    const newTodoName = newTodo.name
+    if (!newTodoName.split(' ').join('')) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: 'ERROR: Todo name is empty.'
+        })
+      };
+    }
+
     const userId: string = getUserId(event);
     const newItem = await createTodo(newTodo, userId)
   
