@@ -6,6 +6,9 @@ import { cors, httpErrorHandler } from 'middy/middlewares'
 
 import { createAttachmentPresignedUrl } from '../../helpers/attachmentUtils'
 // import { getUserId } from '../utils'
+import { createLogger } from '../../utils/logger';
+
+const logger = createLogger('generate Upload Url');
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -13,7 +16,7 @@ export const handler = middy(
     // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
     const uploadUrl = createAttachmentPresignedUrl(todoId);
 
-    // logger.info('Upload url: %s', uploadUrl);
+    logger.info('Upload url: %s', uploadUrl);
 
     return {
       statusCode: 202,

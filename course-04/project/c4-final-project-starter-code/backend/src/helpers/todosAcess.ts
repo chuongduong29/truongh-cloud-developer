@@ -1,14 +1,15 @@
 import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+// import * as AWSXRay from 'aws-xray-sdk'
+const AWSXRay = require('aws-xray-sdk');
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-// import { createLogger } from '../utils/logger'
+import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
 // import { TodoUpdate } from '../models/TodoUpdate';
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-// const logger = createLogger('TodosAccess')
+const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
 
@@ -58,12 +59,15 @@ export class TodoAccess {
   }
 
   async updateTodoItem(userId: string, todoId: string, todo: UpdateTodoRequest): Promise<void> {
-    // logger.info('Starting update todo: ', todo);
+    logger.info('update Todo Item: ', todo);
     await this.docClient.update({
       TableName: this.todosTable,
       Key: { userId, todoId },
       UpdateExpression: 'set #name = :updateName, #done = :doneStatus, #dueDate = :updateDueDate',
-      ExpressionAttributeNames: { '#name': 'name', '#done': 'done', '#dueDate': 'dueDate' },
+      ExpressionAttributeNames: { 
+        '#name': 'name',
+        '#done': 'done',
+        '#dueDate': 'dueDate' },
       ExpressionAttributeValues: {
         ':updateName': todo.name,
         ':doneStatus': todo.done,

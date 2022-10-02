@@ -10,7 +10,7 @@ import * as uuid from 'uuid'
 // TODO: Implement businessLogic
 // import { parseUserId } from '../auth/utils'
 
-
+// const logger = createLogger('Todos')
 const todoAccess = new TodoAccess()
 
 export async function getTodosForUser(userId: string): Promise<TodoItem[]> {

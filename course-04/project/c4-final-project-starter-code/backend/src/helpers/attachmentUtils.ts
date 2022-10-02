@@ -1,12 +1,13 @@
 import * as AWS from 'aws-sdk'
 // import * as AWSXRay from 'aws-xray-sdk'
+const AWSXRay = require('aws-xray-sdk');
 import { createLogger } from '../utils/logger';
 const logger = createLogger('S3 Attachment')
 
-// const XAWS = AWSXRay.captureAWS(AWS)
+const XAWS = AWSXRay.captureAWS(AWS)
 
 // TODO: Implement the fileStogare logic
-const s3 = new AWS.S3({
+const s3 = new XAWS.S3({
     signatureVersion: 'v4'
   });
 
@@ -34,9 +35,9 @@ export async function removeAttachment(todoId: string): Promise<void> {
       logger.info("file deleted Successfully")
     }
     catch (err) {
-      logger.error("ERROR in file Deleting : " + JSON.stringify(err))
+      logger.error("ERROR in file Deleting: " + JSON.stringify(err))
     }
   } catch (err) {
-    logger.error("File not Found ERROR : " + err.code)
+    logger.error("File not Found ERROR: " + err.code)
   }
 }

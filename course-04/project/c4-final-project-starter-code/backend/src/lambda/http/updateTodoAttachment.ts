@@ -12,7 +12,7 @@ const logger = createLogger('Update Todo')
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    logger.info('Starting update todo attachment', event);
+    logger.info('Starting update todo attachment: ', event);
     const todoId = event.pathParameters.todoId;
     const userId: string = getUserId(event);
     const updatedItem = await updateTodoAttachment(userId, todoId);
