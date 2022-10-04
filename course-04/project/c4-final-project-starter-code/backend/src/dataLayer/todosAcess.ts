@@ -36,6 +36,23 @@ export class TodoAccess {
     return items as TodoItem[]
   }
 
+  async getTodo(userId: string, todoId: string): Promise<TodoItem> {
+    const result = await this.docClient.get({
+        TableName: this.todosTable,
+        Key: {
+          userId,
+          todoId
+        }
+    }).promise();
+
+    return result.Item as TodoItem;
+  }
+
+  async getTodoAttachmentUrl(userId: string, todoId: string): Promise<string> {
+    const result =await this.getTodo(userId, todoId)
+    return result.attachmentUrl;
+  }
+
   async createTodoItem(todo: TodoItem): Promise<TodoItem> {
     console.log('Creating a todo with id ${todo.todoId}')
     

@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
+import { createTodo, deleteTodo, getTodos, patchTodo, downloadTodoAttachment } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
 
@@ -42,6 +42,14 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   onEditButtonClick = (todoId: string) => {
     this.props.history.push(`/todos/${todoId}/edit`)
+  }
+
+  onDownloadTodoAttachment = async (todoId: string) => {
+    try {
+      await downloadTodoAttachment(this.props.auth.getIdToken(), todoId)
+    } catch {
+      alert('DownloadTodoAttachment failed')
+    }
   }
 
   onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
@@ -168,7 +176,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                   checked={todo.done}
                 />
               </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
+              <Grid.Column width={8} verticalAlign="middle">
                 {todo.name}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
@@ -183,6 +191,17 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                   <Icon name="pencil" />
                 </Button>
               </Grid.Column>
+              {/* ============ */}
+              <Grid.Column width={1} floated="right">
+                <Button
+                  icon
+                  color="yellow"
+                  onClick={() => this.onDownloadTodoAttachment(todo.todoId)}
+                >
+                  <Icon name="download" />
+                </Button>
+              </Grid.Column>   
+              {/* ============ */}     
               <Grid.Column width={1} floated="right">
                 <Button
                   icon

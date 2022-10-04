@@ -45,3 +45,7 @@ export async function updateTodo(userId: string, todoId: string, payload: Update
   export async function updateTodoAttachment(userId: string, todoId: string): Promise<void> {
     return todoAccess.updateTodoAttachment(userId, todoId);
   }
+
+  export async function getTodoAttachmentUrl(userId: string, todoId: string): Promise<string> {
+    return todoAccess.getTodoAttachmentUrl(userId, todoId);
+  }

@@ -3,7 +3,7 @@ import { Todo } from '../types/Todo';
 import { CreateTodoRequest } from '../types/CreateTodoRequest';
 import Axios from 'axios'
 import { UpdateTodoRequest } from '../types/UpdateTodoRequest';
-
+ 
 export async function getTodos(idToken: string): Promise<Todo[]> {
   console.log('Fetching todos')
 
@@ -78,6 +78,27 @@ export async function getUploadUrl(
     }
   })
   return response.data.uploadUrl
+}
+
+export async function downloadTodoAttachment(
+  idToken: string,
+  todoId: string
+): Promise<void> {
+  const response = await Axios.get(`${apiEndpoint}/todos/${todoId}/attachment`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    }
+  })
+
+  const imageUrl:string = response.data.TodoAttachmentUrl
+  if (imageUrl)
+  {
+    window.open(imageUrl, '__blank')
+    window.URL.revokeObjectURL(imageUrl)
+  } else {
+    alert('No image is available')
+  }
 }
 
 export async function uploadFile(uploadUrl: string, file: Buffer): Promise<void> {
